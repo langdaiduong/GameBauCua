@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="16dp">
+
+        <ImageView
+            android:id="@+id/imgBanCo"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:src="@drawable/bau" />
+
+        <Spinner
+            android:id="@+id/spinGiatien"
+            android:layout_width="98dp"
+            android:layout_height="51dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="65dp" />
+
+
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>
