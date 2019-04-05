@@ -4,7 +4,8 @@ import android.content.Context;
         import android.view.LayoutInflater;
         import android.view.View;
         import android.view.ViewGroup;
-        import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
         import android.widget.ImageView;
         import android.widget.Spinner;
 
@@ -28,14 +29,32 @@ public class Custom_GridView_BanCo extends ArrayAdapter<Integer> {
 
 
     @Override
-    public View getView(int position, View convertView,  ViewGroup parent) {
+    //tham so khai bao con final thi khong the thay doi
+    public View getView(final int position, View convertView, ViewGroup parent) {
         convertView = LayoutInflater.from(context).inflate(R.layout.custom_banco, parent, false);
 
         ImageView imBanCo =convertView.findViewById(R.id.imgBanCo);
+
         Spinner spGiaTien=convertView.findViewById(R.id.spinGiatien);
 
         imBanCo.setImageResource(objects[position]);//position vi tri cua view truyen vao VD: Hươu position = 0;
         spGiaTien.setAdapter(adapter);
+
+        //ham xu ly su kien nguoi dung chon spiner
+        spGiaTien.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            //khi item duoc chon
+            public void onItemSelected(AdapterView<?> parent, View view, int positionspin, long id) {
+
+                MainActivity.gtDatCuoc[position] = giatien[positionspin];
+            }
+
+            @Override
+            //khong duoc chon
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         return convertView;
 
     }
