@@ -3,6 +3,9 @@ package com.example.baucuatom;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -10,27 +13,34 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.sql.Time;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
-    private GridView gridView;
-    private Custom_GridView_BanCo adapter;
-    private Integer[] dsHinh = {R.drawable.nai,R.drawable.bau,R.drawable.ga,R.drawable.ca,R.drawable.cua,R.drawable.tom};
-    private AnimationDrawable cdXiNgau1, cdXiNgau2, cdXiNgau3;
-    private ImageView hinhXiNgau1,hinhXiNgau2,hinhXiNgau3;
-    private Random randomXiNgau;
-    private TextView tvTien;
-    private int tongTienCu,tongTienMoi;
-    private int tienThuong , kiemTra;
-    private SharedPreferences luuTru;
+    GridView gridView;
+    Custom_GridView_BanCo adapter;
+    Integer[] dsHinh = {R.drawable.nai,R.drawable.bau,R.drawable.ga,R.drawable.ca,R.drawable.cua,R.drawable.tom};
+    AnimationDrawable cdXiNgau1, cdXiNgau2, cdXiNgau3;
+    ImageView hinhXiNgau1,hinhXiNgau2,hinhXiNgau3;
+    Random randomXiNgau;
+    TextView tvTien;
+    int tongTienCu,tongTienMoi;
+    int tienThuong , kiemTra, id_amthanh;
+    SharedPreferences luuTru;
+    SoundPool AmThanhXiNgau = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+    MediaPlayer nhacnen = new MediaPlayer();
+    CheckBox ktAmThanh;
+
     private int giatriXiNgau1,giatriXiNgau2,giatriXiNgau3;
     public static Integer[] gtDatCuoc = new Integer[6];
     Timer timer = new Timer();
@@ -98,6 +108,28 @@ public class MainActivity extends AppCompatActivity {
         tongTienCu = luuTru.getInt("TongTien",1000);
         tvTien.setText(String.valueOf(tongTienCu));
 
+        id_amthanh = AmThanhXiNgau.load(this, R.raw.music, 1);
+        nhacnen = MediaPlayer.create(this,R.raw.nhacnen);
+        nhacnen.start();
+        ktAmThanh.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean kt) {
+                if(kt){
+                    nhacnen.stop();
+                }else {
+                    try{
+                        nhacnen.prepare();
+                        nhacnen.start();
+                    } catch (IllegalStateException e){
+                        e.printStackTrace();
+                    } catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        });
+
         handler = new Handler(callback);
     }
 
@@ -127,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
             if(kiemTra > tongTienCu){
                 Toast.makeText(getApplicationContext(),"Bạn không đủ tiền để đặt cược !",Toast.LENGTH_SHORT).show();
             }else{
+                AmThanhXiNgau.play(id_amthanh,1.0f, 1.0f,1, 0, 1.0f);
                 cdXiNgau1.start();
                 cdXiNgau2.start();
                 cdXiNgau3.start();

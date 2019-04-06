@@ -30,10 +30,19 @@
                 android:layout_height="40dp"
                 android:layout_marginLeft="50dp"
                 android:background="@drawable/backgroundview"
-                android:gravity="center"
-                android:text="400" />
+                android:gravity="center" />
 
         </FrameLayout>
+
+        <CheckBox
+            android:id="@+id/checkbox1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="20dp"
+            android:button="@drawable/hinhamthanh"
+            android:text="@null" />
 
         <ImageView
             android:id="@+id/imageView"
