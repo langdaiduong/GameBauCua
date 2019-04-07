@@ -92,10 +92,18 @@
                 android:id="@+id/xingau3"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:onClick="LacXiNgau"
                 android:src="@drawable/hinhdongxingau" />
 
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btnLacXiNgau"
+            android:layout_width="120dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="150dp"
+            android:background="@drawable/btn3"
+            android:onClick="LacXiNgau"/>
 
     </FrameLayout>
 
