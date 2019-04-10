@@ -2,9 +2,10 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:state_checked="false"
-        android:drawable="@drawable/loa" />
+        android:drawable="@drawable/amthanhmo"
+        />
     <item
         android:state_checked="true"
-        android:drawable="@drawable/loax" />
-
+        android:drawable="@drawable/amthanhtat"
+        />
 </selector>

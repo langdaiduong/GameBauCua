@@ -12,6 +12,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/nen">
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="20dp">
+
+        <CheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="10dp"
+            android:button="@drawable/hinhamthanh"
+            android:text="@null" />
+        </FrameLayout>
+
 
 
         <FrameLayout
@@ -26,23 +42,14 @@
 
             <TextView
                 android:id="@+id/tvTien"
-                android:layout_width="65dp"
+                android:layout_width="92dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="40dp"
                 android:background="@drawable/backgroundview"
-                android:gravity="center" />
+                android:gravity="center"
+                android:text="400" />
 
         </FrameLayout>
-
-        <CheckBox
-            android:id="@+id/checkbox1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginTop="12dp"
-            android:layout_marginRight="20dp"
-            android:button="@drawable/hinhamthanh"
-            android:text="@null" />
 
         <ImageView
             android:id="@+id/imageView"
@@ -54,7 +61,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="250dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="100dp"
             android:orientation="horizontal">
 
             <GridView
@@ -67,13 +74,12 @@
             </GridView>
 
 
-
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="51dp"
-            android:layout_marginTop="330dp">
+            android:layout_marginTop="360dp">
 
             <ImageView
                 android:id="@+id/xingau1"
@@ -97,13 +103,25 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/btnLacXiNgau"
-            android:layout_width="120dp"
+            android:id="@+id/btnplay"
+            android:layout_width="100dp"
             android:layout_height="30dp"
             android:layout_gravity="center"
-            android:layout_marginTop="150dp"
+            android:layout_marginTop="170dp"
             android:background="@drawable/btn3"
+            android:text="@null"
             android:onClick="LacXiNgau"/>
+
+        <TextView
+            android:id="@+id/tvThoiGian"
+            android:layout_width="wrap_content"
+            android:layout_height="51dp"
+            android:layout_gravity="right"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="100dp"
+            android:text="00:03:00"
+            android:textColor="#fff"
+            android:textSize="20dp" />
 
     </FrameLayout>
 

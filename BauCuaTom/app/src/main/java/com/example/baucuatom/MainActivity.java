@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.AudioManager;
+import android.media.MediaActionSound;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -25,29 +27,32 @@ import java.sql.Time;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-    GridView gridView;
-    Custom_GridView_BanCo adapter;
-    Integer[] dsHinh = {R.drawable.nai,R.drawable.bau,R.drawable.ga,R.drawable.ca,R.drawable.cua,R.drawable.tom};
-    AnimationDrawable cdXiNgau1, cdXiNgau2, cdXiNgau3;
-    ImageView hinhXiNgau1,hinhXiNgau2,hinhXiNgau3;
-    Random randomXiNgau;
-    TextView tvTien;
-    int tongTienCu,tongTienMoi;
-    int tienThuong , kiemTra, id_amthanh;
-    SharedPreferences luuTru;
-    SoundPool AmThanhXiNgau = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-    MediaPlayer nhacnen = new MediaPlayer();
-    CheckBox ktAmThanh;
-
-    private int giatriXiNgau1,giatriXiNgau2,giatriXiNgau3;
+    private GridView gridView;
+    private Custom_GridView_BanCo adapter;
+    private Integer[] dsHinh = {R.drawable.nai, R.drawable.bau, R.drawable.ga, R.drawable.ca, R.drawable.cua, R.drawable.tom};
+    private AnimationDrawable cdXiNgau1, cdXiNgau2, cdXiNgau3;
+    private ImageView hinhXiNgau1, hinhXiNgau2, hinhXiNgau3;
+    private Random randomXiNgau;
+    private TextView tvTien,tvThoiGian;
+    private int tongTienCu, tongTienMoi;
+    private int tienThuong, kiemTra, id_amthanh;
+    private int giatriXiNgau1, giatriXiNgau2, giatriXiNgau3;
     public static Integer[] gtDatCuoc = new Integer[6];
-    Timer timer = new Timer();
-    Handler handler;
+    private Timer timer = new Timer();
+    private Handler handler;
+    private int tien;
+    private CountDownTimer demthoigian;
+
+//    private CheckBox ktAmThanh;
+//    private MediaPlayer nhacnen = new MediaPlayer();
+    private SoundPool amThanhXiNgau = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+    //(luong toi da,loai am thanh,do uu tien)
 
 
-    Handler.Callback callback = new Handler.Callback(){
+    Handler.Callback callback = new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             RandomXiNgau1();
@@ -75,13 +80,12 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Quá dữ , Bạn đã trúng " + tienThuong, Toast.LENGTH_SHORT).show();
             } else if (tienThuong == 0) {
                 Toast.makeText(getApplicationContext(), "Hên quá mém chết! ", Toast.LENGTH_SHORT).show();
-            } else{
+            } else {
                 Toast.makeText(getApplicationContext(), "Ôi xui quá mất " + tienThuong + "  rồi!", Toast.LENGTH_SHORT).show();
             }
 
 
-
-            Log.d("KetQua", " " + giatriXiNgau1 + " " + giatriXiNgau2 + " " + giatriXiNgau3 +"  " + "TienThuong:" + tienThuong );
+            Log.d("KetQua", " " + giatriXiNgau1 + " " + giatriXiNgau2 + " " + giatriXiNgau3 + "  " + "TienThuong:" + tienThuong);
             LuuDuLieuNguoiDung(tienThuong);
             tvTien.setText(String.valueOf(tongTienMoi));
 
@@ -94,53 +98,74 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        hinhXiNgau1 =  findViewById(R.id.xingau1);
-        hinhXiNgau2 =  findViewById(R.id.xingau2);
-        hinhXiNgau3 =  findViewById(R.id.xingau3);
+        hinhXiNgau1 = findViewById(R.id.xingau1);
+        hinhXiNgau2 = findViewById(R.id.xingau2);
+        hinhXiNgau3 = findViewById(R.id.xingau3);
         tvTien = findViewById(R.id.tvTien);
+        tvThoiGian = findViewById(R.id.tvThoiGian);
+//        ktAmThanh = findViewById(R.id.checkBox);
 
         gridView = findViewById(R.id.gvBanCo);
-        adapter = new Custom_GridView_BanCo(this,R.layout.custom_banco,dsHinh);
+        adapter = new Custom_GridView_BanCo(this, R.layout.custom_banco, dsHinh);
         gridView.setAdapter(adapter);
 
+        SharedPreferences sharedPreferences = getSharedPreferences("luutruthongtin", Context.MODE_PRIVATE);
+        tongTienCu = sharedPreferences.getInt("TongTien", 1000);
+        tien = tongTienCu + tienThuong;
+        tvTien.setText(String.valueOf(tien));
 
-        luuTru = getSharedPreferences("luutruthongtin", Context.MODE_PRIVATE);
-        tongTienCu = luuTru.getInt("TongTien",1000);
-        tvTien.setText(String.valueOf(tongTienCu));
 
-        id_amthanh = AmThanhXiNgau.load(this, R.raw.music, 1);
-        nhacnen = MediaPlayer.create(this,R.raw.nhacnen);
-        nhacnen.start();
-        ktAmThanh.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        id_amthanh = amThanhXiNgau.load(this, R.raw.lac, 1);
+
+        demthoigian = new CountDownTimer(180000,1000) {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean kt) {
-                if(kt){
-                    nhacnen.stop();
-                }else {
-                    try{
-                        nhacnen.prepare();
-                        nhacnen.start();
-                    } catch (IllegalStateException e){
-                        e.printStackTrace();
-                    } catch (IOException e){
-                        e.printStackTrace();
-                    }
-                }
+            public void onTick(long millisUntilFinished) {
+                long milis = millisUntilFinished;
+                long gio = TimeUnit.MILLISECONDS.toHours(milis);
+                long phut = TimeUnit.MILLISECONDS.toMinutes(milis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milis));
+                long giay = TimeUnit.MILLISECONDS.toSeconds(milis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milis));
+
+                String giophutgiay = String.format("%02d:%02d:%02d",gio,phut,giay);
+                tvThoiGian.setText(giophutgiay);
 
             }
-        });
+
+            @Override
+            public void onFinish() {
+                SharedPreferences sharedPreferences = getSharedPreferences("luutruthongtin", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                // SharedPreferences.Editor edit = luuTru.edit();
+                SharedPreferences sharedPreference = getSharedPreferences("luutruthongtin", Context.MODE_PRIVATE);
+                tongTienCu = sharedPreference.getInt("TongTien", 1000);
+                tongTienMoi = tongTienCu + 1000;
+                editor.putInt("TongTien", tongTienMoi);
+                editor.commit();
+                tvTien.setText(String.valueOf(tongTienMoi));
+                demthoigian.cancel();
+                demthoigian.start();
+
+            }
+        };
+
+        demthoigian.start();
+
 
         handler = new Handler(callback);
     }
 
-    private void LuuDuLieuNguoiDung(int tienThuong){
-        SharedPreferences.Editor edit = luuTru.edit();
+    private void LuuDuLieuNguoiDung(int tienThuong) {
+        SharedPreferences sharedPreferences = getSharedPreferences("luutruthongtin", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        // SharedPreferences.Editor edit = luuTru.edit();
+        SharedPreferences sharedPreference = getSharedPreferences("luutruthongtin", Context.MODE_PRIVATE);
+        tongTienCu = sharedPreference.getInt("TongTien", 1000);
         tongTienMoi = tongTienCu + tienThuong;
-        edit.putInt("Tong Tien:",tongTienMoi);
-        edit.commit();
+        editor.putInt("TongTien", tongTienMoi);
+        editor.commit();
     }
 
-    public void LacXiNgau(View v){
+    public void LacXiNgau(View v) {
         hinhXiNgau1.setImageResource(R.drawable.hinhdongxingau);
         hinhXiNgau2.setImageResource(R.drawable.hinhdongxingau);
         hinhXiNgau3.setImageResource(R.drawable.hinhdongxingau);
@@ -149,39 +174,42 @@ public class MainActivity extends AppCompatActivity {
         cdXiNgau2 = (AnimationDrawable) hinhXiNgau2.getDrawable();
         cdXiNgau3 = (AnimationDrawable) hinhXiNgau3.getDrawable();
 
-         kiemTra = 0;
-        for (int i = 0; i < gtDatCuoc.length; i++){
+        kiemTra = 0;
+        for (int i = 0; i < gtDatCuoc.length; i++) {
             kiemTra += gtDatCuoc[i];
         }
-        if(kiemTra == 0){
-            Toast.makeText(getApplicationContext(),"Bạn vui lòng đặt cược !",Toast.LENGTH_SHORT).show();
-        }else {
-            if(kiemTra > tongTienCu){
-                Toast.makeText(getApplicationContext(),"Bạn không đủ tiền để đặt cược !",Toast.LENGTH_SHORT).show();
-            }else{
-                AmThanhXiNgau.play(id_amthanh,1.0f, 1.0f,1, 0, 1.0f);
+        if (kiemTra == 0) {
+            Toast.makeText(getApplicationContext(), "Bạn vui lòng đặt cược !", Toast.LENGTH_SHORT).show();
+        } else {
+            SharedPreferences sharedPreference = getSharedPreferences("luutruthongtin", Context.MODE_PRIVATE);
+            tongTienCu = sharedPreference.getInt("TongTien", 1000);
+            if (kiemTra > tongTienCu) {
+                Toast.makeText(getApplicationContext(), "Bạn không đủ tiền để đặt cược !", Toast.LENGTH_SHORT).show();
+            } else {
+
+                amThanhXiNgau.play(id_amthanh, 1.0f, 1.0f, 1, 0, 1.0f);
                 cdXiNgau1.start();
                 cdXiNgau2.start();
                 cdXiNgau3.start();
 
                 tienThuong = 0;
 
-                timer.schedule(new LacXiNgau(),1000);
+                timer.schedule(new LacXiNgau(), 2000);
             }
         }
     }
 
-    class LacXiNgau extends TimerTask{
+    class LacXiNgau extends TimerTask {
         @Override
-        public void run(){
+        public void run() {
             handler.sendEmptyMessage(0);
         }
     }
 
-    private void RandomXiNgau1(){
+    private void RandomXiNgau1() {
         randomXiNgau = new Random();
         int rd = randomXiNgau.nextInt(6);
-        switch (rd){
+        switch (rd) {
             case 0:
                 hinhXiNgau1.setImageResource(dsHinh[0]);
                 giatriXiNgau1 = rd;
@@ -209,10 +237,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void RandomXiNgau2(){
+    private void RandomXiNgau2() {
         randomXiNgau = new Random();
         int rd = randomXiNgau.nextInt(6);
-        switch (rd){
+        switch (rd) {
             case 0:
                 hinhXiNgau2.setImageResource(dsHinh[0]);
                 giatriXiNgau2 = rd;
@@ -240,10 +268,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void RandomXiNgau3(){
+    private void RandomXiNgau3() {
         randomXiNgau = new Random();
         int rd = randomXiNgau.nextInt(6);
-        switch (rd){
+        switch (rd) {
             case 0:
                 hinhXiNgau3.setImageResource(dsHinh[0]);
                 giatriXiNgau3 = rd;
